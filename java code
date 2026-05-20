@@ -1,0 +1,98 @@
+import java.util.Scanner;
+
+public class OfflineMap {
+
+    // Constants
+    static final char EMPTY = '.';
+    static final char WALL = '#';
+    static final char PLAYER = 'P';
+    static final char GOAL = 'G';
+
+    static char[][] map = {
+        {'.', '.', '.', '.', 'G'},
+        {'.', '#', '#', '.', '.'},
+        {'.', '.', '.', '.', '.'},
+        {'.', '#', '.', '#', '.'},
+        {'.', '.', '.', '.', '.'}
+    };
+
+    static int playerX = 0;
+    static int playerY = 0;
+    static int moves = 0;
+
+    public static void printMap() {
+        System.out.println("\nMap:");
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                if (i == playerX && j == playerY) {
+                    System.out.print(PLAYER + " ");
+                } else {
+                    System.out.print(map[i][j] + " ");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println("Moves: " + moves);
+        System.out.println("Legend: P=Player, G=Goal, #=Wall");
+    }
+
+    public static boolean move(char direction) {
+        int newX = playerX;
+        int newY = playerY;
+
+        switch (direction) {
+            case 'w': newX--; break;
+            case 's': newX++; break;
+            case 'a': newY--; break;
+            case 'd': newY++; break;
+            case 'q': return false; // quit
+            default:
+                System.out.println("Invalid input! Use W/A/S/D or Q to quit.");
+                return true;
+        }
+
+        if (isValidMove(newX, newY)) {
+            playerX = newX;
+            playerY = newY;
+            moves++;
+        } else {
+            System.out.println("Blocked! Can't move there.");
+        }
+
+        return true;
+    }
+
+    public static boolean isValidMove(int x, int y) {
+        return x >= 0 && x < map.length &&
+               y >= 0 && y < map[0].length &&
+               map[x][y] != WALL;
+    }
+
+    public static boolean hasWon() {
+        return map[playerX][playerY] == GOAL;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        boolean running = true;
+
+        System.out.println("=== Simple Grid Game ===");
+
+        while (running) {
+            printMap();
+
+            if (hasWon()) {
+                System.out.println(" You reached the goal in " + moves + " moves!");
+                break;
+            }
+
+            System.out.print("Move (W/A/S/D, Q to quit): ");
+            char input = scanner.next().toLowerCase().charAt(0);
+
+            running = move(input);
+        }
+
+        System.out.println("Game Over.");
+        scanner.close();
+    }
+}
